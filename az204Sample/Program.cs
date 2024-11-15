@@ -14,10 +14,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
          .AddMicrosoftIdentityWebApp(builder.Configuration, "AzureAd");
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("IsAdmin"));
-});
 
 builder.Services.AddRazorPages().AddMvcOptions(options =>
 {
