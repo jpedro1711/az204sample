@@ -1,7 +1,31 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
+using System.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+         .AddMicrosoftIdentityWebApp(builder.Configuration, "AzureAd");
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("IsAdmin"));
+});
+
+builder.Services.AddRazorPages().AddMvcOptions(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+                  .RequireAuthenticatedUser()
+                  .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddMicrosoftIdentityUI();
 
 var app = builder.Build();
 
@@ -18,6 +42,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

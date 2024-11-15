@@ -1,4 +1,5 @@
 using az204Sample.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -13,6 +14,7 @@ namespace az204Sample.Controllers
             _logger = logger;
         }
 
+        //[Authorize(Policy = "IsAdmin")]
         public IActionResult Index()
         {
             return View();
